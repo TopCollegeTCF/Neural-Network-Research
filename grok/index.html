@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Мини-платформер</title>
+<style>
+  body { margin:0; overflow:hidden; background:#111; font-family:Arial; }
+  #game {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(#87CEEB, #E0F7FA);
+    overflow: hidden;
+  }
+  #player {
+    position: absolute;
+    width: 40px;
+    height: 60px;
+    background: #e74c3c;
+    border-radius: 8px 8px 4px 4px;
+    transition: transform 0.1s;
+  }
+  .platform {
+    position: absolute;
+    background: #27ae60;
+    border-radius: 6px;
+    box-shadow: 0 4px 0 #1e8449;
+  }
+  #score {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    color: white;
+    font-size: 24px;
+    text-shadow: 2px 2px 4px #000;
+    z-index: 10;
+  }
+  .coin {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    background: gold;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ffeb3b;
+    animation: spin 2s linear infinite;
+  }
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+</head>
+<body>
+
+<div id="game">
+  <div id="score">Счёт: 0</div>
+</div>
+
+<script>
+const game = document.getElementById('game');
+const player = document.createElement('div');
+player.id = 'player';
+game.appendChild(player);
+
+let x = 100, y = 300;
+let vx = 0, vy = 0;
+let score = 0;
+const gravity = 0.6;
+const jumpPower = -13;
+let onGround = false;
+
+const keys = {};
+
+// Создаём платформы
+const platforms = [
+  {x:0,   y:480, w:window.innerWidth, h:40},
+  {x:180, y:380, w:140, h:20},
+  {x:380, y:300, w:120, h:20},
+  {x:620, y:220, w:180, h:20},
+  {x:40,  y:160, w:140, h:20},
+];
+
+platforms.forEach(p => {
+  const div = document.createElement('div');
+  div.className = 'platform';
+  div.style.left   = p.x + 'px';
+  div.style.top    = p.y + 'px';
+  div.style.width  = p.w + 'px';
+  div.style.height = p.h + 'px';
+  game.appendChild(div);
+  p.element = div;
+});
+
+// Монетки
+const coins = [];
+function spawnCoin() {
+  const coin = document.createElement('div');
+  coin.className = 'coin';
+  coin.style.left = (Math.random()*window.innerWidth*0.8 + 50) + 'px';
+  coin.style.top  = (Math.random()*300 + 50) + 'px';
+  game.appendChild(coin);
+  coins.push(coin);
+}
+for(let i=0; i<6; i++) spawnCoin();
+
+document.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
+document.addEventListener('keyup',   e => keys[e.key.toLowerCase()] = false);
+
+function update() {
+  // Управление
+  vx *= 0.85;
+  if (keys['a'] || keys['arrowleft']) vx -= 1.2;
+  if (keys['d'] || keys['arrowright']) vx += 1.2;
+  
+  if ((keys[' '] || keys['w'] || keys['arrowup']) && onGround) {
+    vy = jumpPower;
+    onGround = false;
+  }
+
+  vy += gravity;
+  x += vx;
+  y += vy;
+
+  // Границы экрана
+  if (x < 0) { x = 0; vx = 0; }
+  if (x > window.innerWidth - 40) { x = window.innerWidth - 40; vx = 0; }
+
+  // Падение вниз → рестарт
+  if (y > window.innerHeight + 100) {
+    x = 100; y = 300; vy = 0; vx = 0;
+    score = Math.max(0, score - 3);
+  }
+
+  // Проверка платформ
+  onGround = false;
+  for (let p of platforms) {
+    if (
+      x + 40 > p.x && x < p.x + p.w &&
+      y + 60 > p.y && y + 60 < p.y + p.h + vy &&
+      vy >= 0
+    ) {
+      y = p.y - 60;
+      vy = 0;
+      onGround = true;
+      vx *= 0.75; // небольшое трение
+    }
+  }
+
+  // Сбор монеток
+  for (let i = coins.length - 1; i >= 0; i--) {
+    const c = coins[i];
+    const cx = parseFloat(c.style.left);
+    const cy = parseFloat(c.style.top);
+    
+    if (
+      x + 40 > cx && x < cx + 24 &&
+      y + 60 > cy && y < cy + 24
+    ) {
+      game.removeChild(c);
+      coins.splice(i, 1);
+      score++;
+      document.getElementById('score').textContent = `Счёт: ${score}`;
+      setTimeout(spawnCoin, 1200);
+    }
+  }
+
+  player.style.left = x + 'px';
+  player.style.top  = y + 'px';
+
+  // Анимация бега
+  if (Math.abs(vx) > 0.5) {
+    player.style.transform = vx > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+  }
+
+  requestAnimationFrame(update);
+}
+
+update();
+</script>
+</body>
+</html>
