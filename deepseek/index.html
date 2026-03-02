@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Простой платформер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #1a1a2e;
+            font-family: Arial, sans-serif;
+        }
+        
+        #gameContainer {
+            position: relative;
+            width: 800px;
+            height: 400px;
+            border: 3px solid #0f3460;
+            background: #16213e;
+            overflow: hidden;
+        }
+        
+        #player {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: #e94560;
+            border-radius: 5px;
+            bottom: 0;
+            left: 50px;
+            transition: bottom 0.3s;
+        }
+        
+        .platform {
+            position: absolute;
+            background: #4a6fa5;
+            border-radius: 3px;
+            box-shadow: 0 3px 0 #1e3c72;
+        }
+        
+        #score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 18px;
+            z-index: 10;
+        }
+        
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+            z-index: 20;
+        }
+        
+        #gameOver button {
+            margin-top: 10px;
+            padding: 5px 20px;
+            background: #e94560;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        #gameOver button:hover {
+            background: #ff6b8b;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <div id="score">Счет: 0</div>
+        <div id="player"></div>
+        <div id="gameOver">
+            <h2>Игра окончена!</h2>
+            <p>Ваш счет: <span id="finalScore">0</span></p>
+            <button onclick="resetGame()">Играть снова</button>
+        </div>
+    </div>
+
+    <script>
+        const gameContainer = document.getElementById('gameContainer');
+        const player = document.getElementById('player');
+        const scoreElement = document.getElementById('score');
+        const gameOverElement = document.getElementById('gameOver');
+        const finalScoreElement = document.getElementById('finalScore');
+        
+        // Начальные параметры игрока
+        let playerX = 50;
+        let playerY = 370; // 400 - 30 (высота игрока)
+        let velocityY = 0;
+        let velocityX = 0;
+        let isJumping = false;
+        let score = 0;
+        
+        // Гравитация и скорость
+        const GRAVITY = 0.5;
+        const JUMP_FORCE = -12;
+        const MOVE_SPEED = 5;
+        
+        // Платформы
+        let platforms = [
+            { x: 0, y: 380, width: 200, height: 20 },
+            { x: 300, y: 300, width: 100, height: 20 },
+            { x: 500, y: 250, width: 100, height: 20 },
+            { x: 650, y: 200, width: 100, height: 20 },
+            { x: 200, y: 150, width: 100, height: 20 }
+        ];
+        
+        // Управление
+        const keys = {};
+        
+        document.addEventListener('keydown', (e) => {
+            keys[e.key] = true;
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.key] = false;
+        });
+        
+        // Создание платформ в DOM
+        function createPlatforms() {
+            platforms.forEach((platform, index) => {
+                const platformElement = document.createElement('div');
+                platformElement.className = 'platform';
+                platformElement.id = `platform${index}`;
+                platformElement.style.left = platform.x + 'px';
+                platformElement.style.width = platform.width + 'px';
+                platformElement.style.height = platform.height + 'px';
+                platformElement.style.bottom = platform.y + 'px';
+                gameContainer.appendChild(platformElement);
+            });
+        }
+        
+        createPlatforms();
+        
+        // Обновление позиции игрока
+        function updatePlayer() {
+            player.style.left = playerX + 'px';
+            player.style.bottom = playerY + 'px';
+        }
+        
+        // Проверка коллизий с платформами
+        function checkCollisions() {
+            let onPlatform = false;
+            
+            // Проверка границ экрана
+            if (playerX < 0) playerX = 0;
+            if (playerX > 770) playerX = 770; // 800 - 30
+            
+            // Проверка падения
+            if (playerY <= 0) {
+                gameOver();
+            }
+            
+            // Проверка коллизий с платформами
+            platforms.forEach(platform => {
+                if (playerX < platform.x + platform.width &&
+                    playerX + 30 > platform.x &&
+                    playerY <= platform.y + platform.height &&
+                    playerY + 30 > platform.y) {
+                    
+                    // Игрок сверху платформы
+                    if (velocityY <= 0 && playerY + 30 <= platform.y + platform.height + 10) {
+                        playerY = platform.y + platform.height;
+                        velocityY = 0;
+                        isJumping = false;
+                        onPlatform = true;
+                        
+                        // Добавляем очки при приземлении на новую платформу
+                        if (platform.y > 100 && platform.y < 380) {
+                            score += 10;
+                            scoreElement.textContent = `Счет: ${score}`;
+                        }
+                    }
+                }
+            });
+            
+            return onPlatform;
+        }
+        
+        // Обновление игры
+        function gameLoop() {
+            if (gameOverElement.style.display === 'block') return;
+            
+            // Горизонтальное движение
+            velocityX = 0;
+            if (keys['ArrowLeft'] || keys['a']) velocityX = -MOVE_SPEED;
+            if (keys['ArrowRight'] || keys['d']) velocityX = MOVE_SPEED;
+            
+            playerX += velocityX;
+            
+            // Прыжок
+            if ((keys['ArrowUp'] || keys['w'] || keys[' ']) && !isJumping) {
+                velocityY = JUMP_FORCE;
+                isJumping = true;
+            }
+            
+            // Гравитация
+            velocityY += GRAVITY;
+            playerY += velocityY;
+            
+            // Проверка коллизий
+            checkCollisions();
+            
+            // Обновление позиции игрока
+            updatePlayer();
+            
+            // Камера: двигаем платформы вниз когда игрок поднимается
+            if (playerY > 300) {
+                let diff = playerY - 300;
+                playerY = 300;
+                
+                platforms.forEach(platform => {
+                    platform.y -= diff;
+                    
+                    // Обновляем позицию платформы в DOM
+                    const platformElement = document.getElementById(`platform${platforms.indexOf(platform)}`);
+                    if (platformElement) {
+                        platformElement.style.bottom = platform.y + 'px';
+                    }
+                });
+                
+                // Удаляем платформы которые ушли вниз
+                platforms = platforms.filter(platform => {
+                    if (platform.y < -50) {
+                        const platformElement = document.getElementById(`platform${platforms.indexOf(platform)}`);
+                        if (platformElement) platformElement.remove();
+                        return false;
+                    }
+                    return true;
+                });
+                
+                // Создаем новые платформы сверху
+                if (platforms.length < 8) {
+                    const newPlatform = {
+                        x: Math.random() * 700,
+                        y: 400 + Math.random() * 100,
+                        width: 80 + Math.random() * 70,
+                        height: 20
+                    };
+                    
+                    platforms.push(newPlatform);
+                    
+                    const platformElement = document.createElement('div');
+                    platformElement.className = 'platform';
+                    platformElement.id = `platform${platforms.length - 1}`;
+                    platformElement.style.left = newPlatform.x + 'px';
+                    platformElement.style.width = newPlatform.width + 'px';
+                    platformElement.style.height = newPlatform.height + 'px';
+                    platformElement.style.bottom = newPlatform.y + 'px';
+                    gameContainer.appendChild(platformElement);
+                }
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Конец игры
+        function gameOver() {
+            gameOverElement.style.display = 'block';
+            finalScoreElement.textContent = score;
+        }
+        
+        // Сброс игры
+        function resetGame() {
+            // Удаляем все платформы
+            platforms.forEach((_, index) => {
+                const platformElement = document.getElementById(`platform${index}`);
+                if (platformElement) platformElement.remove();
+            });
+            
+            // Сбрасываем параметры
+            playerX = 50;
+            playerY = 370;
+            velocityY = 0;
+            isJumping = false;
+            score = 0;
+            scoreElement.textContent = 'Счет: 0';
+            
+            // Создаем новые платформы
+            platforms = [
+                { x: 0, y: 380, width: 200, height: 20 },
+                { x: 300, y: 300, width: 100, height: 20 },
+                { x: 500, y: 250, width: 100, height: 20 },
+                { x: 650, y: 200, width: 100, height: 20 },
+                { x: 200, y: 150, width: 100, height: 20 }
+            ];
+            
+            createPlatforms();
+            
+            gameOverElement.style.display = 'none';
+        }
+        
+        // Запуск игры
+        gameLoop();
+    </script>
+</body>
+</html>
