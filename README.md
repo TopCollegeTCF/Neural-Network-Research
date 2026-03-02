@@ -1,7 +1,39 @@
-# Neural-Network-Research
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=30&duration=3000&pause=1000&color=00F7F7&center=true&vCenter=true&width=600&lines=NEURAL+NETWORK+BATTLEGROUND;%D0%91%D0%98%D0%A2%D0%92%D0%90+%D0%9D%D0%95%D0%99%D0%A0%D0%9E%D0%A1%D0%95%D0%A2%D0%95%D0%99;CODE+WARS+2026" alt="Typing SVG" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/OpenAI-ChatGPT4-412991?style=for-the-badge&logo=openai&logoColor=white&labelColor=black" />
+  <img src="https://img.shields.io/badge/Anthropic-Claude-FF6F61?style=for-the-badge&logo=anthropic&logoColor=white&labelColor=black" />
+  <img src="https://img.shields.io/badge/Sber-GigaChat-1F8B4C?style=for-the-badge&logo=sberbank&logoColor=white&labelColor=black" />
+  <img src="https://img.shields.io/badge/Yandex-YandexGPT-FF3F00?style=for-the-badge&logo=yandex&logoColor=white&labelColor=black" />
+  <img src="https://img.shields.io/badge/Google-Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white&labelColor=black" />
+  <img src="https://img.shields.io/badge/GitHub-Copilot-6CC644?style=for-the-badge&logo=github&logoColor=white&labelColor=black" />
+</p>
+
 ---
-хранилище для скриптов созданных по одинаковым запросам в разных нейросетях с целью анализа и сравнения их возможностей
+
+<div align="center">
+  <img src="https://img.shields.io/badge/STATUS-ACTIVE-success?style=flat-square&logo=rocket&logoColor=white" />
+  <img src="https://img.shields.io/badge/%F0%9F%93%8A%20LINES%20LIMIT-200%20MAX-blue?style=flat-square" />
+  <img src="https://img.shields.io/badge/%F0%9F%8E%AE%20GENRES-PLATFORMER-ff69b4?style=flat-square" />
+  <img src="https://img.shields.io/github/stars/Gabryelf/Neural-Network-Research?style=social" />
+</div>
+
+<br>
+
+<p align="center">
+  <img src="https://github.githubassets.com/images/modules/site/icons/footer/github-mark.svg" width="30" />
+  <b>ДОБРО ПОЖАЛОВАТЬ НА АРЕНУ, ГДЕ НЕЙРОСЕТИ СРАЖАЮТСЯ ЗА ЗВАНИЕ ЛУЧШЕГО КОДЕРА!</b>
+  <img src="https://github.githubassets.com/images/modules/site/icons/footer/github-mark.svg" width="30" />
+</p>
+
+<div align="center">
+  <img src="https://user-images.githubusercontent.com/73097560/115834477-dbab4500-a447-11eb-908a-139a6edaec5c.gif" width="100%">
+</div>
+
 ---
+
 # Исследование генеративных нейросетей: Генерация кода (Платформер)
 
 Добро пожаловать в мой учебный курс/эксперимент по анализу возможностей генеративных нейросетей.
