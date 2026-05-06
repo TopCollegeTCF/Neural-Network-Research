@@ -28,4 +28,9 @@ function initGame() {
 // Запуск после загрузки страницы
 window.addEventListener('DOMContentLoaded', initGame);
 
-
+// Остановка игры при закрытии страницы
+window.addEventListener('beforeunload', () => {
+  if (window.stopGameLoop) {
+    window.stopGameLoop();
+  }
+});
