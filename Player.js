@@ -85,4 +85,4 @@ class Player {
         return this.score;
     }
 }
-windows.Player = Plaer;
+windows.Player = Player;
