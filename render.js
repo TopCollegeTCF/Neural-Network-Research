@@ -26,12 +26,12 @@ function render() {
     window.Player.draw(ctx);
   }
 
-  UpdateUI();
+  updateUI();
 }
 
 /* UI update fuction */
 
-function UpdateUI() {
+function updateUI() {
   if (window.Player) return;
 
   const pos = window.Player.getPosition();
