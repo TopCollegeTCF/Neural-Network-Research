@@ -1,0 +1,65 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body{
+  background: linear-gradient(135deg, #0a0a2a 0%, #1a1a3e 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  aling-items: center;
+  font-family: 'Courier New', 'Monaco', monospace;
+}
+
+.game-container{
+  position: relative;
+  display: inline-block;
+}
+
+#gameCanvas{
+  display: block;
+  margin: 0 auto;
+  border: 3px solid #44aaff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(68, 170, 255, 0.3);
+  cursor: none;
+  background-color: #050b1a;
+}
+
+.info-panel{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 15px;
+  border-radius: 8px;
+  color: #44aaff;
+  font-weight: bold;
+  font-size: 14px;
+  border-left: 3px solid #44aaff;
+  backdrop-filter: blur(5px);
+  font-family: monospace;
+}
+
+.info-panel div{
+  margin: 5px 0;
+}
+
+.controls-hint{
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #88ccff;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+#positionDisplay, #scoreDisplay {
+  color: #ffaa44;
+  font-weight: bold;
+}
