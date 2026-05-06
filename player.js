@@ -41,3 +41,14 @@ draw(ctx) {
     if (keys.a) ctx.fillRect(this.x + this.size + 2, this.y + 15, 8, 10);
     if (keys.d) ctx.fillRect(this.x - 8, this.y + 15, 8, 10);
 }
+
+getPosition() {
+    return { x: this.x, y: this.y };
+}
+
+getScore() {
+      return this.score;
+  }
+}
+
+window.Player = new Player();
