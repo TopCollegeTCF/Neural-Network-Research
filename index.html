@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Игра</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Контейнер для отображения счёта или координат игрока -->
+    <div id="gameInfo">
+        <span id="scoreDisplay">Счёт: 0</span>
+        <span id="coordsDisplay">X: 0, Y: 0</span>
+    </div>
+
+    <!-- Игровое поле -->
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <!--
+        Подключение JavaScript-файлов.
+        Порядок важен: сначала вспомогательные модули,
+        затем основной игровой код.
+    -->
+    <script src="utils.js"></script>
+    <script src="game.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
