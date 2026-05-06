@@ -10,7 +10,7 @@ function initRender() {
 
 /* Rendering function */
 
-function Render() {
+function render() {
   if (!ctx || !canvas) return;
   
   ctx.clearRect(0, 0, CONFIG.canvasWidth, CONFIG.canvasHeight);
