@@ -8,3 +8,12 @@ window.DATA = {
     height: 50
   }
 }
+
+const CONFIG = {
+  canvasWidth: 800;
+  canvasHeight: 600;
+
+  playerSize: 40;
+  playerColor: '44aaff',
+  playerSpeed: 5,
+}
