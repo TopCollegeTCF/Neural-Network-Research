@@ -1,64 +1,66 @@
-class Input {
-    constructor(){
-        this.keys = {};
-        this.player = {
-        x: 400,
-        y: 300,
-        speed: 5,
-        width: 40,
-        height: 40
-        }
-        this.eventListener();
+window.InputState = {
+    keys: {
+        w: false,
+        s: false,
+        a: false,
+        d: false,
+    },
+    mouse: {
+        x: 0,
+        y: 0,
+        leftButton: false,
+        rightButton: false
     }
+};
 
-    eventListener(){
-       // Обработчики клавиш
-        window.addEventListener('keydown', (e) => {
-            keys[e.key.toLowerCase()] = true;
-        });
-        
-        window.addEventListener('keyup', (e) => {
-            keys[e.key.toLowerCase()] = false;
-        }); 
-    }
-    
-    // Основная функция обновления (вызывается каждый кадр)
-    updateInput() {
-        let moved = false;
-    
-        if (keys['w'] || keys['arrowup']) {
-            player.y -= player.speed;
-            moved = true;
+function initInput() {
+    window.addEventListener('keydown', (e) => {
+        const key = e.key.toLowerCase();
+
+        if (['w', 's', 'a', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
+            e.preventDefault();
         }
-        if (keys['s'] || keys['arrowdown']) {
-            player.y += player.speed;
-            moved = true;
-        }
-        if (keys['a'] || keys['arrowleft']) {
-            player.x -= player.speed;
-            moved = true;
-        }
-        if (keys['d'] || keys['arrowright']) {
-            player.x += player.speed;
-            moved = true;
-        }
+
     
-        // Ограничение по границам экрана (можно убрать или изменить)
-        player.x = Math.max(0, Math.min(player.x, 800 - player.width));
-        player.y = Math.max(0, Math.min(player.y, 600 - player.height));
+        if (key === 'w' || key === 'arrowup') window.InputState.keys.w = true;
+        if (key === 's' || key === 'arrowdown') window.InputState.keys.s = true;
+        if (key === 'a' || key === 'arrowleft') window.InputState.keys.a = true;
+        if (key === 'd' || key === 'arrowright') window.InputState.keys.d = true;
+    });
+
+    window.addEventListener('keyup', (e) => {
+        const key = e.key.toLowerCase();
+
+        if (key === 'w' || key === 'arrowup') window.InputState.keys.w = false;
+        if (key === 's' || key === 'arrowdown') window.InputState.keys.s = false;
+        if (key === 'a' || key === 'arrowleft') window.InputState.keys.a = false;
+        if (key === 'd' || key === 'arrowright') window.InputState.keys.d = false;
+    });
+
+
     
-        return player; // возвращаем актуальное состояние персонажа
-    }
-    
-    // Получить текущее состояние игрока (для Core)
-    getPlayer() {
-        return player;
-    }
-    
-    // Если нужно сбросить позицию
-    resetPlayer(x = 400, y = 300) {
-        player.x = x;
-        player.y = y;
-    }
+    window.addEventListener('mousemove', (e) => {
+        const canvas = document.getElementById('gameCanvas');
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        window.InputState.mouse.x = (e.clientX - rect.left) * scaleX;
+        window.InputState.mouse.y = (e.clientY - rect.top) * scaleY;
+    });
+
+   
+    window.addEventListener('mousedown', (e) => {
+        if (e.button === 0) window.InputState.mouse.leftButton = true;
+        if (e.button === 2) window.InputState.mouse.rightButton = true;
+    });
+    window.addEventListener('mouseup', (e) => {
+        if (e.button === 0) window.InputState.mouse.leftButton = false;
+        if (e.button === 2) window.InputState.mouse.rightButton = false;
+    });
+
+    window.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        return false;
+    });
 }
-window.Input = new Input();
+window.initInput = initInput;
