@@ -1,5 +1,5 @@
 // player.js — отвечает за состояние и логику персонажа
-export class Player {
+class Player {
     constructor(x = 380, y = 280) {
         this.x = x;
         this.y = y;
@@ -85,3 +85,4 @@ export class Player {
         return this.score;
     }
 }
+windows.Player = Plaer;
