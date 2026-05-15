@@ -1,51 +1,36 @@
-class Game {
-  constructor() {
-    this.canvas = null;
-    this.ctx = null;
-    this.playerState = null;
-  }
+// Проверка загрузки модулей
+function checkDependencies() {
+  var deps = [
+    { name: 'getPlayer', obj: window.getPlayer },
+    { name: 'updateInput', obj: window.updateInput }
+  ];
 
-  start() {
-    if (!window.getPlayer || !window.updateInput) {
-      console.error('input.js не подключён или функции не доступны');
-      return;
+  var allLoaded = true;
+
+  for (var i = 0; i < deps.length; i++) {
+    if (!deps[i].obj) {
+      console.error('❌ ' + deps[i].name + ' не загружен');
+      allLoaded = false;
+    } else {
+      console.log('✔ ' + deps[i].name + ' загружен');
     }
-
-    this.canvas = document.createElement('canvas');
-    this.canvas.width = 800;
-    this.canvas.height = 600;
-    document.body.appendChild(this.canvas);
-
-    this.ctx = this.canvas.getContext('2d');
-
-    this.playerState = window.getPlayer();
-
-    this.update();
   }
 
-  update() {
-    const gameLoop = () => {
-      this.playerState = window.updateInput();
-
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.drawPlayer();
-
-      requestAnimationFrame(gameLoop);
-    };
-
-    gameLoop();
-  }
-
-  drawPlayer() {
-    this.ctx.fillStyle = 'red';
-    this.ctx.fillRect(
-      this.playerState.x,
-      this.playerState.y,
-      this.playerState.width,
-      this.playerState.height
-    );
-  }
+  return allLoaded;
+}
+// Главная функция инициализации
+function initGame() {
+  window.initRender();
+  window.initInput();
+  window.initState();
 }
 
-window.game = new Game();
-window.game.start();
+// Запуск после загрузки страницы
+window.addEventListener('DOMContentLoaded', initGame);
+
+// Остановка игры при закрытии страницы
+window.addEventListener('beforeunload', () => {
+  if (window.stopGameLoop) {
+    window.stopGameLoop();
+  }
+});
