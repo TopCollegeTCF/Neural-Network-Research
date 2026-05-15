@@ -1,42 +1,45 @@
-let animationId = null;
-let isRunning = true;
+// state.js
 
-function initstate() {
-    console.log('v state.js инициализирован');
-    startGameLoop();
-}
+const GameState = {
+    // Состояние клавиш
+    keys: {
+        w: false,
+        s: false,
+        a: false,
+        d: false
+    },
 
-function gameLoop() {
-    if (lisRunning) return;
+    // Позиция игрока
+    player: {
+        x: 400,
+        y: 300,
+        width: 40,
+        height: 40,
+        speed: 5
+    },
 
-    if (window.Player && typeof window.Player.updateMovement === 'function') {
-        window.Player.updateMovement();
+    // Счёт игрока
+    score: 0,
+
+    // Метод обновления логики
+    update() {
+        if (this.keys.w) {
+            this.player.y -= this.player.speed;
+        }
+
+        if (this.keys.s) {
+            this.player.y += this.player.speed;
+        }
+
+        if (this.keys.a) {
+            this.player.x -= this.player.speed;
+        }
+
+        if (this.keys.d) {
+            this.player.x += this.player.speed;
+        }
     }
+};
 
-    if (window.render && typeof window.render === 'function') {
-        window.render();
-    }
-
-    animationId = requestAnimationFrame(gameLoop);
-}
-
-function startGameLoop() {
-    if (animationId) {
-        cancelAnimationFrame(animationId);
-    }
-    isRunning = true;
-    animationId = requestAnimationFrame(gameLoop);
-    console.log(' Игровой цикл запущен');
-}
-function stopGameLoop() {
-    isRunning = false;
-    if (animationId) {
-        cancelAnimationFrame(animationId);
-        animationId = null;
-    }
-    console.log(' Игровой цикл остановлен');
-}
-
-window.initState = initstate;
-window. stopGameLoop = stopGameLoop;
-window. startGameLoop = startGameLoop;
+// Экспорт в window
+window.GameState = GameState;
